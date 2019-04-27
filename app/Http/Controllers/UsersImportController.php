@@ -96,9 +96,11 @@ class UsersImportController extends Controller
                     $created_at[$value][] = intval(
                         $this->users[$i]['onboarding_perentage']
                     );
+                    
                 }
             }
         }
+        
         return $created_at;
     }
 
@@ -112,7 +114,13 @@ class UsersImportController extends Controller
     public function getCountIndividualWeek(array $list): array
     {
         $list = array_count_values($list);
-        krsort($list);
-        return  $list;
+        ksort($list);
+        $totals = array_sum($list);
+        for ($i = 0; $i < count($list); $i++) {
+            if (!empty(array_slice($list, $i))) {
+                $total[] = intval(number_format((array_sum(array_slice($list, $i))/$totals) * 100, 0));
+            }
+        }
+        return  $total;
     }
 }

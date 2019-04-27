@@ -47,21 +47,38 @@
                 let week_2 = Object.values(this.list[31])
                 let week_3 = Object.values(this.list[32])
                 let week_4 = Object.values(this.list[33])
-                week_1.unshift(100)
-                week_2.unshift(100)
-                week_3.unshift(100)
-                week_4.unshift(100)
                 this.setUp({week_1, week_2, week_3, week_4})
             },
             setUp(obj) {
                 const {week_1, week_2, week_3, week_4} = obj
                 Highcharts.chart('container-for-charts', {
+                    chart: {
+                        type: 'spline',
+                        scrollablePlotArea: {
+                            minWidth: 600,
+                            scrollPositionX: 1
+                        }
+                    },
                     title: {
                         text: 'WEEKLY RETENTION CURVES'
                     },
                      xAxis: {
-                        min: 0,
-                        minRange: 5
+                         title: {
+                            text: 'Steps in the onboarding Process'
+                        },
+                        categories: [0, 20, 40, 50 ,60, 70, 90, 99, 100],
+                        
+                        
+                    },
+                    yAxis: {
+                        title: {
+                            text: '% number of users'
+                        },
+                        labels: {
+                            formatter: function () {
+                                return this.value;
+                            }
+                        }
                     },
                     legend: {
                         layout: 'vertical',
