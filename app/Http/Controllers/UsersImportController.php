@@ -36,10 +36,20 @@ class UsersImportController extends Controller
                 "created_at" => CarbonImmutable::parse(
                     $list[0][$i]['created_at']
                 )->week(),
-                "onboarding_perentage" => $list[0][$i]['onboarding_perentage']
+                "onboarding_percentage" => $list[0][$i]['onboarding_percentage']
             );
         }
         $this->users = $users;
+    }
+
+    /**
+     * Get the list of users with created at and onboarding percentage
+     *
+     * @return void
+     */
+    public function getOnboardingCreatedAtList()
+    {
+        return $this->users;
     }
     /**
      * Get the Onboarding Perioud count per week
@@ -94,13 +104,12 @@ class UsersImportController extends Controller
             for ($i = 0; $i < count($this->users); $i++) {
                 if ($this->users[$i]['created_at'] == $value) {
                     $created_at[$value][] = intval(
-                        $this->users[$i]['onboarding_perentage']
+                        $this->users[$i]['onboarding_percentage']
                     );
-                    
                 }
             }
         }
-        
+
         return $created_at;
     }
 
@@ -118,7 +127,9 @@ class UsersImportController extends Controller
         $totals = array_sum($list);
         for ($i = 0; $i < count($list); $i++) {
             if (!empty(array_slice($list, $i))) {
-                $total[] = intval(number_format((array_sum(array_slice($list, $i))/$totals) * 100, 0));
+                $total[] = intval(
+                    number_format((array_sum(array_slice($list, $i)) / $totals) * 100, 0)
+                );
             }
         }
         return  $total;

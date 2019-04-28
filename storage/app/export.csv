@@ -1,4 +1,4 @@
-user_id,created_at,onboarding_perentage,count_applications,count_accepted_applications
+user_id,created_at,onboarding_percentage,count_applications,count_accepted_applications
 3121,2016-07-19,40,0,0
 3122,2016-07-19,40,0,0
 3123,2016-07-19,40,0,0
