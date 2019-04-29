@@ -35,7 +35,7 @@ class UsersControllerTest extends TestCase
     }
 
     /**
-     * Test if the array conataines created at
+     * Test if the array contains created at
      * 
      * @return void
      */
@@ -53,14 +53,14 @@ class UsersControllerTest extends TestCase
                 "onboarding_percentage" => $list[0][$i]['onboarding_percentage']
             );
         }
-        $user_import->setOnboardingCreatedAt();
-        $users_ = $user_import->getOnboardingCreatedAtList();
+        $user_import->setCreatedAtOnboarding();
+        $users_ = $user_import->getCreatedAtOnboarding();
         $this->assertNotNull($users_);
         $this->assertEquals($users, $users_);
     }
 
     /**
-     * Test unique date of account creation for users weekely
+     * Test unique date of account creation for users weekly
      * Test if array contains unique date of creation
      * 
      * @return void
@@ -70,8 +70,8 @@ class UsersControllerTest extends TestCase
         $this->withoutExceptionHandling();
         $user_import = new UsersImportController;
         $user_import->import();
-        $user_import->setOnboardingCreatedAt();
-        $users_ = $user_import->getOnboardingCreatedAtList();
+        $user_import->setCreatedAtOnboarding();
+        $users_ = $user_import->getCreatedAtOnboarding();
         for ($i = 0; $i < count($users_); $i++) {
             $created_at[] = $users_[$i]['created_at'];
         }
@@ -86,24 +86,24 @@ class UsersControllerTest extends TestCase
         $this->assertCount(
             count($created_at),
             $user_import->getOnboardingUniquePeriod(),
-            "Weekely Cohorts is not equal to" . count($created_at)
+            "Weekly Cohorts is not equal to" . count($created_at)
         );
     }
 
 
     /**
-     * Test grouping of weekely cohorts
+     * Test grouping of weekly cohorts
      * 
      * @return void
      */
-    public function test_weekely_cohort_listing()
+    public function test_weekly_cohort_listing()
     {
         $this->withoutExceptionHandling();
         $created_at = [];
         $user_import = new UsersImportController;
         $user_import->import();
-        $user_import->setOnboardingCreatedAt();
-        $users = $user_import->getOnboardingCreatedAtList();
+        $user_import->setCreatedAtOnboarding();
+        $users = $user_import->getCreatedAtOnboarding();
         $users_ = $user_import->getOnboardingUniquePeriod();
         $this->assertIsArray($users_);
 
@@ -124,7 +124,7 @@ class UsersControllerTest extends TestCase
         $this->assertEquals(
             $created_at,
             $users_created_at,
-            "Expected Equal number of weekely cohorts"
+            "Expected Equal number of weekly cohorts"
         );
 
         for ($i = 0; $i < count($created_at_keys); $i++) {
@@ -137,13 +137,13 @@ class UsersControllerTest extends TestCase
      * 
      * @return void
      */
-    public function test_calculated_weekely_user_percentage_value()
+    public function test_calculated_weekly_user_percentage_value()
     {
         $this->withoutExceptionHandling();
         $new_list = [];
         $user_import = new UsersImportController;
         $user_import->import();
-        $user_import->setOnboardingCreatedAt();
+        $user_import->setCreatedAtOnboarding();
         $users_created_at = $user_import->getOnboardingCreatedAtPeriod(
             $user_import->getOnboardingUniquePeriod()
         );

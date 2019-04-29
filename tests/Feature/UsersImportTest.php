@@ -48,7 +48,7 @@ class UsersImportTest extends TestCase
     public function test_return_values_is_array()
     {
         $import = new UsersImportController;
-        $import->setOnboardingCreatedAt();
+        $import->setCreatedAtOnboarding();
         $this->assertIsArray($import->getOnboardingUniquePeriod());
         $created_at = $import->getOnboardingCreatedAtPeriod(
             $import->getOnboardingUniquePeriod()

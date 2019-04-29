@@ -12,7 +12,7 @@ class UsersImportController extends Controller
      *
      * @var array
      */
-    protected $create_onboarding = [];
+    protected $create_at_onboarding = [];
 
     /**
      * Import the CSV File
@@ -32,19 +32,19 @@ class UsersImportController extends Controller
      *
      * @return void
      */
-    public function setOnboardingCreatedAt()
+    public function setCreatedAtOnboarding()
     {
         $list = $this->import();
-        $create_onboarding = [];
+        $create_at_onboarding = [];
         for ($i = 0; $i < count($list[0]); $i++) {
-            $create_onboarding[] = array(
+            $create_at_onboarding[] = array(
                 "created_at" => CarbonImmutable::parse(
                     $list[0][$i]['created_at']
                 )->week(),
                 "onboarding_percentage" => $list[0][$i]['onboarding_percentage']
             );
         }
-        $this->create_onboarding = $create_onboarding;
+        $this->create_at_onboarding = $create_at_onboarding;
     }
 
     /**
@@ -52,9 +52,9 @@ class UsersImportController extends Controller
      *
      * @return array
      */
-    public function getOnboardingCreatedAtList(): array
+    public function getCreatedAtOnboarding(): array
     {
-        return $this->create_onboarding;
+        return $this->create_at_onboarding;
     }
 
     /**
@@ -64,7 +64,7 @@ class UsersImportController extends Controller
      */
     public function getPeriodCountOnboardingPercentage()
     {
-        $this->setOnboardingCreatedAt();
+        $this->setCreatedAtOnboarding();
         $created_at = $this->getOnboardingCreatedAtPeriod(
             $this->getOnboardingUniquePeriod()
         );
@@ -88,8 +88,8 @@ class UsersImportController extends Controller
     public function getOnboardingUniquePeriod(): array
     {
         $created_at = [];
-        for ($i = 0; $i < count($this->create_onboarding); $i++) {
-            $created_at[] = $this->create_onboarding[$i]['created_at'];
+        for ($i = 0; $i < count($this->create_at_onboarding); $i++) {
+            $created_at[] = $this->create_at_onboarding[$i]['created_at'];
         }
 
         return array_unique($created_at);
@@ -106,10 +106,10 @@ class UsersImportController extends Controller
     {
         $created_at = [];
         foreach ($list as $key => $value) {
-            for ($i = 0; $i < count($this->create_onboarding); $i++) {
-                if ($this->create_onboarding[$i]['created_at'] == $value) {
+            for ($i = 0; $i < count($this->create_at_onboarding); $i++) {
+                if ($this->create_at_onboarding[$i]['created_at'] == $value) {
                     $created_at[$value][] = intval(
-                        $this->create_onboarding[$i]['onboarding_percentage']
+                        $this->create_at_onboarding[$i]['onboarding_percentage']
                     );
                 }
             }
@@ -134,9 +134,8 @@ class UsersImportController extends Controller
             if (!empty(array_slice($list, $i))) {
                 $total[] = intval(
                     number_format(
-                        (
-                            array_sum(array_slice($list, $i)) / $totals
-                        ) * 100, 0
+                        (array_sum(array_slice($list, $i)) / $totals) * 100,
+                        0
                     )
                 );
             }
