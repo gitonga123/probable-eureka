@@ -7,56 +7,62 @@ use Carbon\CarbonImmutable;
 
 class UsersImportController extends Controller
 {
-    protected $users;
+    /**
+     * Array containing created at and corresponding percentages only
+     *
+     * @var array
+     */
+    protected $create_onboarding = [];
 
     /**
      * Import the CSV File
      *
-     * @return void
+     * @return array
      */
-    public function import()
+    public function import(): array
     {
 
-        $users = (new UsersImport)->toArray('export.csv');
+        $users_list = (new UsersImport)->toArray('export.csv');
 
-        return $users;
+        return $users_list;
     }
 
     /**
-     * Get the Onboarding Period and the Percentange
+     * Get the Created at Periods and Onboarding Percentages into an array
      *
      * @return void
      */
     public function setOnboardingCreatedAt()
     {
         $list = $this->import();
-        $users = [];
+        $create_onboarding = [];
         for ($i = 0; $i < count($list[0]); $i++) {
-            $users[] = array(
+            $create_onboarding[] = array(
                 "created_at" => CarbonImmutable::parse(
                     $list[0][$i]['created_at']
                 )->week(),
                 "onboarding_percentage" => $list[0][$i]['onboarding_percentage']
             );
         }
-        $this->users = $users;
+        $this->create_onboarding = $create_onboarding;
     }
 
     /**
      * Get the list of users with created at and onboarding percentage
      *
-     * @return void
+     * @return array
      */
-    public function getOnboardingCreatedAtList()
+    public function getOnboardingCreatedAtList(): array
     {
-        return $this->users;
+        return $this->create_onboarding;
     }
+
     /**
-     * Get the Onboarding Perioud count per week
+     * Return a json response of weekly onboarding percentages
      *
-     * @return void
+     * @return \Illuminate\Http\Response
      */
-    public function getOnboardingPeriodCount()
+    public function getPeriodCountOnboardingPercentage()
     {
         $this->setOnboardingCreatedAt();
         $created_at = $this->getOnboardingCreatedAtPeriod(
@@ -82,29 +88,28 @@ class UsersImportController extends Controller
     public function getOnboardingUniquePeriod(): array
     {
         $created_at = [];
-        for ($i = 0; $i < count($this->users); $i++) {
-            $created_at[] = $this->users[$i]['created_at'];
+        for ($i = 0; $i < count($this->create_onboarding); $i++) {
+            $created_at[] = $this->create_onboarding[$i]['created_at'];
         }
 
         return array_unique($created_at);
     }
 
     /**
-     * Get the number of users and the corresponding percentages
-     * For the users created for that particulator period
+     * Get the list of onboarding percentages for every unique week
      *
      * @param array $list // An array of period of creation and the percentage
-     * 
+     *
      * @return array
      */
     public function getOnboardingCreatedAtPeriod(array $list): array
     {
         $created_at = [];
         foreach ($list as $key => $value) {
-            for ($i = 0; $i < count($this->users); $i++) {
-                if ($this->users[$i]['created_at'] == $value) {
+            for ($i = 0; $i < count($this->create_onboarding); $i++) {
+                if ($this->create_onboarding[$i]['created_at'] == $value) {
                     $created_at[$value][] = intval(
-                        $this->users[$i]['onboarding_percentage']
+                        $this->create_onboarding[$i]['onboarding_percentage']
                     );
                 }
             }
@@ -114,10 +119,10 @@ class UsersImportController extends Controller
     }
 
     /**
-     * Get number of onboarding percentages grouped on similarity
+     * Get the number of created at percentages per weekly cohort
      *
-     * @param array $list // contains the list of onboarding percetages
-     * 
+     * @param array $list // contains the list of onboarding percentages weekly
+     *
      * @return array
      */
     public function getCountIndividualWeek(array $list): array
@@ -128,7 +133,11 @@ class UsersImportController extends Controller
         for ($i = 0; $i < count($list); $i++) {
             if (!empty(array_slice($list, $i))) {
                 $total[] = intval(
-                    number_format((array_sum(array_slice($list, $i)) / $totals) * 100, 0)
+                    number_format(
+                        (
+                            array_sum(array_slice($list, $i)) / $totals
+                        ) * 100, 0
+                    )
                 );
             }
         }

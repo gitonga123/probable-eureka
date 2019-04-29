@@ -18,5 +18,5 @@ use Illuminate\Http\Request;
 // });
 Route::get(
     'users_list',
-    'UsersImportController@getOnboardingPeriodCount'
+    'UsersImportController@getPeriodCountOnboardingPercentage'
 );
